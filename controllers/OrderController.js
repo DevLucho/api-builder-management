@@ -2,35 +2,46 @@
 const OrderModel = require('../models/Order');
 const TypeOrderModel = require('../models/TypeOrder');
 const MaterialModel = require('../models/Material');
+const UserModel = require('../models/User');
 
-async function createOrder(req, res) {
-    const checkCoordinate = await OrderModel.find({'latitude': req.body.latitude, 'longitude': req.body.longitude});
-    if (checkCoordinate.length > 0) {
-        res.status(200).send({ status: false, message: 'Ya existe una orden en las coordenadas dadas' });
-    } else {
-        TypeOrderModel.findById(req.body.id_type_order, (err, data) => {
-            if (err) {
-                res.status(200).send({ status: false, message: 'No existe el tipo de construcción' });
-            } else {
-                isAvail(data).then(value => {
-                    if (value) {
-                        orderStartAndEnd(req.body, data.construction_days).then(obj => {
-                            OrderModel.create(obj, (err2, data2) => {
-                                if (err2) {
-                                    res.status(200).send({ status: false, message: 'Fallo al crear solicitud' });
+function createOrder(req, res) {
+    UserModel.findById(req.body.id_user, (err, data) => {
+        if (err) {
+            res.status(200).send({ status: false, message: 'Fallo consultando el usuario' });
+        } else {
+            if (data.roles.includes("Arquitecto")) {
+                const checkCoordinate = OrderModel.find({'latitude': req.body.latitude, 'longitude': req.body.longitude});
+                if (checkCoordinate.length > 0) {
+                    res.status(200).send({ status: false, message: 'Ya existe una orden con las coordenadas dadas' });
+                } else {
+                    TypeOrderModel.findById(req.body.id_type_order, (err, data) => {
+                        if (err) {
+                            res.status(200).send({ status: false, message: 'No existe el tipo de construcción' });
+                        } else {
+                            isAvail(data).then(value => {
+                                if (value) {
+                                    orderStartAndEnd(req.body, data.construction_days).then(obj => {
+                                        OrderModel.create(obj, (err2, data2) => {
+                                            if (err2) {
+                                                res.status(200).send({ status: false, message: 'Fallo al crear solicitud' });
+                                            } else {
+                                                updateMaterial(data);
+                                                res.status(200).send({ status: true, message: 'Solicitud creada exitósamente' });
+                                            }
+                                        });
+                                    });
                                 } else {
-                                    updateMaterial(data);
-                                    res.status(200).send({ status: true, message: 'Solicitud creada exitósamente' });
+                                    res.status(200).send({ status: false, message: 'No hay suficiente stock en los materiales' });
                                 }
-                            });
-                        });
-                    } else {
-                        res.status(200).send({ status: false, message: 'No hay suficiente stock en los materiales' });
-                    }
-                })
+                            })
+                        }
+                    });
+                }
+            } else {
+                res.status(200).send({ status: false, message: 'No tiene permisos para crear solicitudes' });
             }
-        });
-    }
+        }
+    });
 }
 
 // check materials stock
@@ -59,6 +70,7 @@ async function updateMaterial(data) {
     }
 }
 
+// schedule the order date linearly
 async function orderStartAndEnd(data, days) {
     const lastOrder = await OrderModel.findOne().sort({'_id': -1});
     if (lastOrder !== null) {
@@ -72,9 +84,19 @@ async function orderStartAndEnd(data, days) {
 
 function sumDays(date, days) {
     date.setDate(date.getDate() + days)
-    return date;
+    return date.toISOString().split('T')[0];
 }
 
+async function consultDateEndProject(req, res) {
+    const lastOrder = await OrderModel.findOne().sort({'_id': -1});
+    if (lastOrder !== null) {
+        res.status(200).send({ status: true, data: lastOrder.date_end.toISOString().split('T')[0] });
+    } else {
+        res.status(200).send({ status: false, message: 'Fallo consultando fecha fin del proyecto' });
+    }
+ }
+
 module.exports = {
-    createOrder
+    createOrder,
+    consultDateEndProject
 }
