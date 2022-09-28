@@ -1,0 +1,13 @@
+[{
+  "_id": {
+    "$oid": "6333724e240dbc0f4c8f8b6e"
+  },
+  "name": "Luis",
+  "lastName": "Huertas",
+  "email": "luisdhuertas@hotmail.com",
+  "password": "123",
+  "roles": [
+    "Arquitecto"
+  ],
+  "status": true
+}]

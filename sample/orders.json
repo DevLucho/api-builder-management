@@ -1,0 +1,23 @@
+[{
+  "_id": {
+    "$oid": "6334756853838f882f084c42"
+  },
+  "id_type_order": {
+    "$oid": "63337460240dbc0f4c8f8b70"
+  },
+  "latitude": 12,
+  "longitude": -99,
+  "date_start": {
+    "$date": "2022-09-29T00:00:00Z"
+  },
+  "date_end": {
+    "$date": "2022-10-01T00:00:00Z"
+  },
+  "status": "pendiente",
+  "created_at": {
+    "$date": "2022-09-28T16:25:12.052Z"
+  },
+  "updated_at": {
+    "$date": "2022-09-28T16:25:12.052Z"
+  }
+}]

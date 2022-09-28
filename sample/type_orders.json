@@ -1,0 +1,66 @@
+[{
+  "_id": {
+    "$oid": "63337422240dbc0f4c8f8b6f"
+  },
+  "name": "Casa",
+  "construction_days": 3,
+  "material": {
+    "Ce": 100,
+    "Gr": 50,
+    "Ar": 90,
+    "Ma": 20,
+    "Ad": 100
+  }
+},{
+  "_id": {
+    "$oid": "63337460240dbc0f4c8f8b70"
+  },
+  "name": "Lago",
+  "construction_days": 2,
+  "material": {
+    "Ce": 50,
+    "Gr": 60,
+    "Ar": 80,
+    "Ma": 10,
+    "Ad": 20
+  }
+},{
+  "_id": {
+    "$oid": "633374b7240dbc0f4c8f8b71"
+  },
+  "name": "Cancha de fútbol",
+  "construction_days": 1,
+  "material": {
+    "Ce": 20,
+    "Gr": 20,
+    "Ar": 20,
+    "Ma": 20,
+    "Ad": 20
+  }
+},{
+  "_id": {
+    "$oid": "633374f8240dbc0f4c8f8b72"
+  },
+  "name": "Edificio",
+  "construction_days": 6,
+  "material": {
+    "Ce": 200,
+    "Gr": 100,
+    "Ar": 180,
+    "Ma": 40,
+    "Ad": 200
+  }
+},{
+  "_id": {
+    "$oid": "63337531240dbc0f4c8f8b73"
+  },
+  "name": "Gimnasio",
+  "construction_days": 2,
+  "material": {
+    "Ce": 50,
+    "Gr": 25,
+    "Ar": 45,
+    "Ma": 10,
+    "Ad": 50
+  }
+}]

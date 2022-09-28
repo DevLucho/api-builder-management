@@ -1,0 +1,36 @@
+[{
+  "_id": {
+    "$oid": "633375c7240dbc0f4c8f8b74"
+  },
+  "code": "Ce",
+  "name": "Cemento",
+  "stock": 650
+},{
+  "_id": {
+    "$oid": "633375c7240dbc0f4c8f8b75"
+  },
+  "code": "Gr",
+  "name": "Grava",
+  "stock": 740
+},{
+  "_id": {
+    "$oid": "633375c7240dbc0f4c8f8b76"
+  },
+  "code": "Ar",
+  "name": "Arena",
+  "stock": 9520
+},{
+  "_id": {
+    "$oid": "633375c7240dbc0f4c8f8b77"
+  },
+  "code": "Ma",
+  "name": "Madera",
+  "stock": 40
+},{
+  "_id": {
+    "$oid": "633375c7240dbc0f4c8f8b78"
+  },
+  "code": "Ad",
+  "name": "Adobe",
+  "stock": 230
+}]
