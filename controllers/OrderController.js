@@ -1,14 +1,78 @@
+'use strict'
 const OrderModel = require('../models/Order');
+const TypeOrderModel = require('../models/TypeOrder');
+const MaterialModel = require('../models/Material');
 
-function createOrder(req, res) {
-    const body = req.body;
-    OrderModel.create(body, (err, data) => {
-        if (err) {
-            res.status(200).send({ status: false, message: 'Fallo al crear solicitud' });
-        } else {
-            res.status(200).send({ status: true, message: 'Solicitud creada exitósamente' });
+async function createOrder(req, res) {
+    const checkCoordinate = await OrderModel.find({'latitude': req.body.latitude, 'longitude': req.body.longitude});
+    if (checkCoordinate.length > 0) {
+        res.status(200).send({ status: false, message: 'Ya existe una orden en las coordenadas dadas' });
+    } else {
+        TypeOrderModel.findById(req.body.id_type_order, (err, data) => {
+            if (err) {
+                res.status(200).send({ status: false, message: 'No existe el tipo de construcción' });
+            } else {
+                isAvail(data).then(value => {
+                    if (value) {
+                        orderStartAndEnd(req.body, data.construction_days).then(obj => {
+                            OrderModel.create(obj, (err2, data2) => {
+                                if (err2) {
+                                    res.status(200).send({ status: false, message: 'Fallo al crear solicitud' });
+                                } else {
+                                    updateMaterial(data);
+                                    res.status(200).send({ status: true, message: 'Solicitud creada exitósamente' });
+                                }
+                            });
+                        });
+                    } else {
+                        res.status(200).send({ status: false, message: 'No hay suficiente stock en los materiales' });
+                    }
+                })
+            }
+        });
+    }
+}
+
+// check materials stock
+async function isAvail(data) {
+    for (let key in data.material) {
+        let material = await MaterialModel.findOne({code: key}).exec();
+        let stockAvail = material.stock - data.material[key];
+        if (stockAvail < 0) {
+            return false;
         }
-    });
+    }
+    return true;
+}
+
+// update materials stock after create order
+async function updateMaterial(data) {
+    for (let key in data.material) {
+        const material = await MaterialModel.findOne({code: key});
+        MaterialModel.findOneAndUpdate({code: key}, {stock: material.stock - data.material[key]}, (err, data2) => {
+            if (err) {
+                return false;
+            } else {
+                return true;
+            }
+        });
+    }
+}
+
+async function orderStartAndEnd(data, days) {
+    const lastOrder = await OrderModel.findOne().sort({'_id': -1});
+    if (lastOrder !== null) {
+        data.date_start = sumDays(new Date(lastOrder.date_end), 1);
+    } else {
+        data.date_start = sumDays(new Date(), 1);
+    }
+    data.date_end = sumDays(new Date(data.date_start), days);
+    return data;
+}
+
+function sumDays(date, days) {
+    date.setDate(date.getDate() + days)
+    return date;
 }
 
 module.exports = {
