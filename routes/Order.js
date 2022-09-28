@@ -17,5 +17,6 @@ api.post('/create', celebrate({
 api.get('/consult/date-end-project', OrderController.consultDateEndProject);
 api.get('/command/update-status-pending', OrderCommand.updateStateOrderPending);
 api.get('/command/update-status-end', OrderCommand.updateStateOrderFinished);
+api.get('/export/:status', OrderController.exportData);
 
 module.exports = api

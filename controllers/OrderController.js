@@ -3,6 +3,7 @@ const OrderModel = require('../models/Order');
 const TypeOrderModel = require('../models/TypeOrder');
 const MaterialModel = require('../models/Material');
 const UserModel = require('../models/User');
+const DataExporter = require('json2csv').Parser;
 
 function createOrder(req, res) {
     UserModel.findById(req.body.id_user, (err, data) => {
@@ -94,9 +95,22 @@ async function consultDateEndProject(req, res) {
     } else {
         res.status(200).send({ status: false, message: 'Fallo consultando fecha fin del proyecto' });
     }
- }
+}
+
+// report count for type order
+async function exportData(req, res) {
+    const orders = await OrderModel.find({status: req.params.status}).count();
+    let data_bd = JSON.parse(JSON.stringify({"Estado": req.params.status, "Cantidad": orders}));
+    // convert JSON to CSV Data
+    let json_data = new DataExporter("Cantidad");
+    let csv_data = json_data.parse(data_bd);
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment;filename=data.csv");
+    res.status(200).end(csv_data);
+}
 
 module.exports = {
     createOrder,
-    consultDateEndProject
+    consultDateEndProject,
+    exportData
 }
